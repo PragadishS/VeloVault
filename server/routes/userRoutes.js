@@ -4,19 +4,16 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const router = express.Router();
 
-// Signup Route
 router.post('/signup', async (req, res) => {
   try {
     const { email, password, username, profile } = req.body;
     
-    // Validate required fields
     if (!email || !password || !username || !profile?.name) {
       return res.status(400).json({ 
         message: 'Email, password, username, and name are required.' 
       });
     }
     
-    // Check if user already exists
     let userExists = await User.findOne({ 
       $or: [{ email }, { username }] 
     });
@@ -29,21 +26,18 @@ router.post('/signup', async (req, res) => {
       });
     }
     
-    // Create new user
     let user = new User({
       email,
-      password, // Will be hashed by the pre-save hook
+      password, 
       username,
       profile
     });
     
     await user.save();
     
-    // Update last login time
     user.lastLogin = Date.now();
     await user.save();
     
-    // Generate token for auto-login
     const token = jwt.sign(
       { id: user._id, userId: user._id }, 
       process.env.JWT_SECRET, 
@@ -66,28 +60,24 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-// Login Route
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     
-    // Find user by email
     let user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
     
-    // Compare passwords using the model method
+
     let isMatch = await user.comparePassword(password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
     
-    // Update last login time
     user.lastLogin = Date.now();
     await user.save();
     
-    // Create token with both id and userId for compatibility
     let token = jwt.sign(
       { id: user._id, userId: user._id }, 
       process.env.JWT_SECRET, 
@@ -109,18 +99,18 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Guest User Route
+
 router.post('/guest', async (req, res) => {
   try {
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substring(2, 10);
     
-    // Create a guest username that won't conflict
+
     const guestUsername = `guest-${timestamp}`;
     
     let guestUser = new User({
       email: `guest-${timestamp}@example.com`,
-      password: `guest-${randomString}`, // Will be hashed by pre-save hook
+      password: `guest-${randomString}`, 
       username: guestUsername,
       profile: { 
         name: 'Guest User',
@@ -130,15 +120,15 @@ router.post('/guest', async (req, res) => {
     
     await guestUser.save();
     
-    // Update last login time
+   
     guestUser.lastLogin = Date.now();
     await guestUser.save();
     
-    // Create token with consistent fields
+    
     let token = jwt.sign(
       { id: guestUser._id, userId: guestUser._id }, 
       process.env.JWT_SECRET, 
-      { expiresIn: '1d' } // Guest tokens expire sooner
+      { expiresIn: '1d' } 
     );
     
     res.json({ 

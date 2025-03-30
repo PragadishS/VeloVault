@@ -2,7 +2,6 @@ const express = require('express');
 const Car = require('../models/Car');
 const router = express.Router();
 
-// Get all cars for a user
 router.get('/', async (req, res) => {
   try {
     const cars = await Car.find({ userId: req.user.id })
@@ -14,7 +13,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get a specific car
 router.get('/:id', async (req, res) => {
   try {
     const car = await Car.findOne({ _id: req.params.id, userId: req.user.id });
@@ -30,12 +28,10 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Add a new car
 router.post('/', async (req, res) => {
   try {
     const carData = req.body;
     
-    // Handle numeric conversions if needed
     if (typeof carData.distanceCovered === 'string') {
       carData.distanceCovered = parseFloat(carData.distanceCovered);
     }
@@ -59,7 +55,6 @@ router.post('/', async (req, res) => {
   } catch (error) {
     console.error('Error adding car:', error);
     
-    // Handle validation errors
     if (error.name === 'ValidationError') {
       const validationErrors = {};
       for (const field in error.errors) {
@@ -75,23 +70,26 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Update a car
 router.put('/:id', async (req, res) => {
   try {
-    // First find the car to verify ownership
     const car = await Car.findById(req.params.id);
     
     if (!car) {
       return res.status(404).json({ message: 'Car not found' });
     }
     
-    // Check if the car belongs to the current user
     if (car.userId.toString() !== req.user.id) {
       return res.status(403).json({ message: 'Not authorized to update this car' });
     }
     
-    // Handle numeric conversions if needed
     const updatedData = { ...req.body };
+    
+    // If upcomingServiceDate isn't provided or is empty string, 
+    // remove it from the update to preserve the existing value
+    if (!updatedData.upcomingServiceDate && updatedData.upcomingServiceDate !== null) {
+      delete updatedData.upcomingServiceDate;
+    }
+    
     if (typeof updatedData.distanceCovered === 'string') {
       updatedData.distanceCovered = parseFloat(updatedData.distanceCovered);
     }
@@ -105,7 +103,6 @@ router.put('/:id', async (req, res) => {
       updatedData.price = parseFloat(updatedData.price);
     }
     
-    // Now update the car
     const updatedCar = await Car.findByIdAndUpdate(
       req.params.id, 
       { ...updatedData, updatedAt: Date.now() },
@@ -116,7 +113,6 @@ router.put('/:id', async (req, res) => {
   } catch (error) {
     console.error('Error updating car:', error);
     
-    // Handle validation errors
     if (error.name === 'ValidationError') {
       const validationErrors = {};
       for (const field in error.errors) {
@@ -132,22 +128,18 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Delete a car
 router.delete('/:id', async (req, res) => {
   try {
-    // First find the car to verify ownership
     const car = await Car.findById(req.params.id);
     
     if (!car) {
       return res.status(404).json({ message: 'Car not found' });
     }
     
-    // Check if the car belongs to the current user
     if (car.userId.toString() !== req.user.id) {
       return res.status(403).json({ message: 'Not authorized to delete this car' });
     }
     
-    // Now delete the car
     await Car.findByIdAndDelete(req.params.id);
     res.json({ message: 'Car deleted successfully' });
   } catch (error) {
@@ -156,7 +148,6 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// Search route - IMPORTANT: This must be BEFORE the /:id route or it will never be reached
 router.get('/search', async (req, res) => {
   try {
     const { query, searchBy } = req.query;
@@ -174,7 +165,6 @@ router.get('/search', async (req, res) => {
     } else if (searchBy === 'company') {
       searchCriteria.companyName = { $regex: query, $options: 'i' };
     } else {
-      // Default search across multiple fields
       searchCriteria.$or = [
         { 'owner.name': { $regex: query, $options: 'i' } },
         { carNumber: { $regex: query, $options: 'i' } },

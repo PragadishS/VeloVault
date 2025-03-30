@@ -27,13 +27,11 @@ const carSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now }
 });
 
-// Update the updatedAt timestamp before saving
 carSchema.pre('save', function(next) {
   this.updatedAt = Date.now();
   next();
 });
 
-// Add index for faster queries
 carSchema.index({ userId: 1 });
 carSchema.index({ 'owner.name': 'text', carNumber: 'text' });
 

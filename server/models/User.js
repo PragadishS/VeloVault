@@ -44,9 +44,8 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-// Hash the password before saving
+
 userSchema.pre('save', async function (next) {
-  // Only hash the password if it's modified (or new)
   if (!this.isModified('password')) return next();
   
   try {
@@ -58,7 +57,7 @@ userSchema.pre('save', async function (next) {
   }
 });
 
-// Method to compare password
+
 userSchema.methods.comparePassword = async function (candidatePassword) {
   try {
     return await bcrypt.compare(candidatePassword, this.password);
@@ -67,13 +66,11 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
   }
 };
 
-// Method to update last login
 userSchema.methods.updateLastLogin = async function () {
   this.lastLogin = Date.now();
   return this.save();
 };
 
-// Static method to find by email (case insensitive)
 userSchema.statics.findByEmail = function (email) {
   return this.findOne({ email: email.toLowerCase() });
 };
