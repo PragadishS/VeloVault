@@ -84,8 +84,7 @@ router.put('/:id', async (req, res) => {
     
     const updatedData = { ...req.body };
     
-    // If upcomingServiceDate isn't provided or is empty string, 
-    // remove it from the update to preserve the existing value
+    
     if (!updatedData.upcomingServiceDate && updatedData.upcomingServiceDate !== null) {
       delete updatedData.upcomingServiceDate;
     }

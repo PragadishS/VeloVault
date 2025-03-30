@@ -22,7 +22,7 @@ const Navbar = ({ onLogout, userInfo, allVehicles, onSearchResults }) => {
 
     try {
       const response = await axios.get(
-        `http://localhost:3333/api/cars/search`,
+        "https://velovault-api.onrender.com/api/cars/search",
         { 
           params: {
             query: searchQuery,

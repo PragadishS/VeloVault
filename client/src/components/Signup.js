@@ -43,7 +43,7 @@ const Signup = ({ onSignupSuccess }) => {
     }
     
     try {
-      await axios.post("http://localhost:3333/api/users/signup", {
+      await axios.post("https://velovault-api.onrender.com/api/users/signup", {
         email,
         password,
         username,

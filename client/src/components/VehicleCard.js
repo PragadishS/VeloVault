@@ -68,7 +68,7 @@ const VehicleCard = ({ vehicle, onDeleteVehicle, onUpdateVehicle }) => {
     
     try {
       const response = await axios.get(
-        `http://localhost:3333/api/cars/${vehicle._id}/serviceHistory`,
+        "https://velovault-api.onrender.com/api/cars/${vehicle._id}/serviceHistory",
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setServiceHistory(response.data);
@@ -84,7 +84,7 @@ const VehicleCard = ({ vehicle, onDeleteVehicle, onUpdateVehicle }) => {
   const handleAddService = async (carId, newService) => {
     try {
       await axios.post(
-        `http://localhost:3333/api/cars/${carId}/serviceHistory`,
+        "https://velovault-api.onrender.com/api/cars/${vehicle._id}/serviceHistory",
         newService,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -118,7 +118,7 @@ const VehicleCard = ({ vehicle, onDeleteVehicle, onUpdateVehicle }) => {
 
     try {
       await axios.post(
-        `http://localhost:3333/api/cars/${vehicle._id}/upcomingServiceDate`,
+       "https://velovault-api.onrender.com/api/cars/${vehicle._id}/upcomingServiceDate",
         { upcomingServiceDate },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -144,7 +144,7 @@ const VehicleCard = ({ vehicle, onDeleteVehicle, onUpdateVehicle }) => {
     
     try {
       const response = await axios.get(
-        `http://localhost:3333/api/cars/${vehicle._id}/resaleValue`,
+        "https://velovault-api.onrender.com/api/cars/${vehicle._id}/resaleValue",
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setResaleValue(response.data.resaleValue);

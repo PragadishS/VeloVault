@@ -83,7 +83,7 @@ const ProfileButton = ({ userInfo, onLogout, onProfileUpdate }) => {
 
     try {
       const response = await axios.put(
-        "http://localhost:3333/api/users/profile",
+        "https://velovault-api.onrender.com/api/users/profile",
         updateData,
         { headers: { Authorization: `Bearer ${token}` } }
       );

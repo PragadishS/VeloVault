@@ -98,7 +98,7 @@ const AddVehicle = ({ onAddVehicle, vehicleToUpdate, onUpdateCancel }) => {
     
     setIsSubmitting(true);
     
-    // Format the vehicle data
+    
     const formattedVehicle = {
       ...vehicle,
       distanceCovered: Number(vehicle.distanceCovered),
@@ -107,19 +107,18 @@ const AddVehicle = ({ onAddVehicle, vehicleToUpdate, onUpdateCancel }) => {
       price: Number(vehicle.price)
     };
     
-    // If we're updating a vehicle and not changing the service date, 
-    // we should not include it in the update to avoid overwriting
+
     if (vehicleToUpdate) {
-      // Don't send upcomingServiceDate in the update unless explicitly changed
+      
       if (formattedVehicle.upcomingServiceDate === "" || 
           formattedVehicle.upcomingServiceDate === "dd/mm/yyyy") {
         delete formattedVehicle.upcomingServiceDate;
       } else if (formattedVehicle.upcomingServiceDate) {
-        // If we have a valid date, send it as a Date object
+        
         formattedVehicle.upcomingServiceDate = new Date(formattedVehicle.upcomingServiceDate);
       }
     } else {
-      // For new vehicles, include the service date if it exists
+     
       formattedVehicle.upcomingServiceDate = vehicle.upcomingServiceDate ? 
         new Date(vehicle.upcomingServiceDate) : null;
     }
@@ -130,7 +129,7 @@ const AddVehicle = ({ onAddVehicle, vehicleToUpdate, onUpdateCancel }) => {
       if (vehicleToUpdate) {
         onUpdateCancel(); 
       } else {
-        // Reset form if adding a new vehicle
+        
         setVehicle({
           companyName: "",
           distanceCovered: "",

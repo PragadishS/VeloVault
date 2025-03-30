@@ -50,7 +50,7 @@ function AppContent() {
     if (!token) return;
     
     try {
-      const response = await axios.get("http://localhost:3333/api/users/me", {
+      const response = await axios.get("https://velovault-api.onrender.com/api/users/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUserInfo(response.data);
@@ -64,7 +64,7 @@ function AppContent() {
     
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:3333/api/cars", {
+      const response = await axios.get("https://velovault-api.onrender.com/api/cars", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setVehicles(response.data);
@@ -83,7 +83,7 @@ function AppContent() {
     
     try {
       if (vehicle._id) {
-        await axios.put(`http://localhost:3333/api/cars/${vehicle._id}`, vehicle, {
+        await axios.put("https://velovault-api.onrender.com/api/cars/${vehicle._id}", vehicle, {
           headers: { Authorization: `Bearer ${token}` },
         });
       } else {
@@ -104,7 +104,7 @@ function AppContent() {
     if (!token) return;
     
     try {
-      await axios.delete(`http://localhost:3333/api/cars/${id}`, {
+      await axios.delete("https://velovault-api.onrender.com/api/cars/${id}", {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchVehicles();
@@ -131,7 +131,7 @@ function AppContent() {
   const handleGuestLogin = async () => {
     try {
       setLoading(true);
-      const response = await axios.post("http://localhost:3333/api/users/guest");
+      const response = await axios.post("https://velovault-api.onrender.com/api/users/guest");
       if (response.data && response.data.token) {
         login(response.data.token);
         if (response.data.user) {
