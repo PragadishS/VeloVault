@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../AuthContext";
 import axios from "axios";
 
@@ -69,13 +69,11 @@ const ProfileButton = ({ userInfo, onLogout, onProfileUpdate }) => {
     setError("");
     setSuccess("");
 
-   
     const updateData = {};
     if (editForm.name !== userInfo.name) updateData.name = editForm.name;
     if (editForm.email !== userInfo.email) updateData.email = editForm.email;
     if (editForm.username !== userInfo.username) updateData.username = editForm.username;
 
-    
     if (Object.keys(updateData).length === 0) {
       setError("No changes to save");
       return;
@@ -90,14 +88,11 @@ const ProfileButton = ({ userInfo, onLogout, onProfileUpdate }) => {
       
       setSuccess("Profile updated successfully");
       
-      
       setUserName(editForm.name || userName);
-      
       
       if (onProfileUpdate && response.data.user) {
         onProfileUpdate(response.data.user);
       }
-      
       
       setTimeout(() => {
         setIsEditing(false);
@@ -118,15 +113,13 @@ const ProfileButton = ({ userInfo, onLogout, onProfileUpdate }) => {
       .substring(0, 2);
   };
 
-  const handleClickOutside = (e) => {
-    
+  const handleClickOutside = useCallback((e) => {
     if (showProfileMenu && e.target.closest('.profile-menu') === null && e.target.closest('.profile-button') === null) {
       setShowProfileMenu(false);
       setIsEditing(false);
     }
-  };
+  }, [showProfileMenu]);
 
-  
   useEffect(() => {
     if (showProfileMenu) {
       document.addEventListener('mousedown', handleClickOutside);
@@ -136,7 +129,7 @@ const ProfileButton = ({ userInfo, onLogout, onProfileUpdate }) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showProfileMenu]);
+  }, [showProfileMenu, handleClickOutside]);
 
   return (
     <div className="profile-container">

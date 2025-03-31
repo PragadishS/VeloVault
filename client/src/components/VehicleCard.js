@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import ServiceHistory from './ServiceHistory';
 import AddVehicle from './AddVehicle';
 import axios from 'axios';
@@ -24,13 +24,29 @@ const VehicleCard = ({ vehicle, onDeleteVehicle, onUpdateVehicle }) => {
   const [error, setError] = useState("");
   const { token } = useAuth();
 
+  const fetchServiceHistory = useCallback(async () => {
+    setLoading({ ...loading, serviceHistory: true });
+    setError("");
+    
+    try {
+      const response = await axios.get(
+        `https://velovault-api.onrender.com/api/cars/${vehicle._id}/serviceHistory`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setServiceHistory(response.data);
+    } catch (error) {
+      console.error("Error fetching service history:", error);
+      setError("Failed to load service history");
+    } finally {
+      setLoading(prevState => ({ ...prevState, serviceHistory: false }));
+    }
+  }, [vehicle._id, token, loading]);
   
   useEffect(() => {
     if (showServiceHistory) {
       fetchServiceHistory();
     }
-  }, [showServiceHistory]);
-
+  }, [showServiceHistory, fetchServiceHistory]);
   
   useEffect(() => {
     if (vehicle.upcomingServiceDate) {
@@ -40,11 +56,9 @@ const VehicleCard = ({ vehicle, onDeleteVehicle, onUpdateVehicle }) => {
     }
     setIsEditingServiceDate(false);
   }, [vehicle]);
-
   
   const getLastServiceInfo = () => {
     if (vehicle.serviceHistory && vehicle.serviceHistory.length > 0) {
-      
       const lastService = [...vehicle.serviceHistory].sort((a, b) => 
         new Date(b.date) - new Date(a.date)
       )[0];
@@ -61,30 +75,10 @@ const VehicleCard = ({ vehicle, onDeleteVehicle, onUpdateVehicle }) => {
     }
   };
 
-  
-  const fetchServiceHistory = async () => {
-    setLoading({ ...loading, serviceHistory: true });
-    setError("");
-    
-    try {
-      const response = await axios.get(
-        "https://velovault-api.onrender.com/api/cars/${vehicle._id}/serviceHistory",
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setServiceHistory(response.data);
-    } catch (error) {
-      console.error("Error fetching service history:", error);
-      setError("Failed to load service history");
-    } finally {
-      setLoading({ ...loading, serviceHistory: false });
-    }
-  };
-
- 
   const handleAddService = async (carId, newService) => {
     try {
       await axios.post(
-        "https://velovault-api.onrender.com/api/cars/${vehicle._id}/serviceHistory",
+        `https://velovault-api.onrender.com/api/cars/${carId}/serviceHistory`,
         newService,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -95,16 +89,13 @@ const VehicleCard = ({ vehicle, onDeleteVehicle, onUpdateVehicle }) => {
       throw error; 
     }
   };
-
  
   const toggleEditServiceDate = () => {
     setIsEditingServiceDate(!isEditingServiceDate);
   };
-
   
   const handleUpdateUpcomingServiceDate = async () => {
     if (!isEditingServiceDate) {
-      
       toggleEditServiceDate();
       return;
     }
@@ -114,11 +105,11 @@ const VehicleCard = ({ vehicle, onDeleteVehicle, onUpdateVehicle }) => {
       return;
     }
 
-    setLoading({ ...loading, updateService: true });
+    setLoading(prevState => ({ ...prevState, updateService: true }));
 
     try {
       await axios.post(
-       "https://velovault-api.onrender.com/api/cars/${vehicle._id}/upcomingServiceDate",
+        `https://velovault-api.onrender.com/api/cars/${vehicle._id}/upcomingServiceDate`,
         { upcomingServiceDate },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -128,23 +119,21 @@ const VehicleCard = ({ vehicle, onDeleteVehicle, onUpdateVehicle }) => {
       console.error("Error updating upcoming service date:", error);
       alert("Failed to update service date. Please try again.");
     } finally {
-      setLoading({ ...loading, updateService: false });
+      setLoading(prevState => ({ ...prevState, updateService: false }));
     }
   };
-
   
   const handleResaleValueClick = async () => {
-    
     if (showResaleValue && resaleValue !== null) {
       setShowResaleValue(false);
       return;
     }
     
-    setLoading({ ...loading, resaleValue: true });
+    setLoading(prevState => ({ ...prevState, resaleValue: true }));
     
     try {
       const response = await axios.get(
-        "https://velovault-api.onrender.com/api/cars/${vehicle._id}/resaleValue",
+        `https://velovault-api.onrender.com/api/cars/${vehicle._id}/resaleValue`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setResaleValue(response.data.resaleValue);
@@ -153,27 +142,25 @@ const VehicleCard = ({ vehicle, onDeleteVehicle, onUpdateVehicle }) => {
       console.error("Error fetching resale value:", error);
       alert("Failed to calculate resale value. Please try again.");
     } finally {
-      setLoading({ ...loading, resaleValue: false });
+      setLoading(prevState => ({ ...prevState, resaleValue: false }));
     }
   };
-
   
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this vehicle? This action cannot be undone.")) {
       return;
     }
     
-    setLoading({ ...loading, deleteVehicle: true });
+    setLoading(prevState => ({ ...prevState, deleteVehicle: true }));
     
     try {
       await onDeleteVehicle(vehicle._id);
     } catch (error) {
       console.error("Error deleting vehicle:", error);
     } finally {
-      setLoading({ ...loading, deleteVehicle: false });
+      setLoading(prevState => ({ ...prevState, deleteVehicle: false }));
     }
   };
-
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-IN', {
@@ -221,7 +208,6 @@ const VehicleCard = ({ vehicle, onDeleteVehicle, onUpdateVehicle }) => {
             <p>{getLastServiceInfo()}</p>
           </div>
           
-          {}
           {showResaleValue && resaleValue !== null && (
             <div className="resale-value">
               <h4>Estimated Resale Value:</h4>
@@ -230,7 +216,6 @@ const VehicleCard = ({ vehicle, onDeleteVehicle, onUpdateVehicle }) => {
           )}
         </div>
         
-        {}
         <div className={`service-date-section ${isEditingServiceDate ? 'editing' : ''}`}>
           <label>
             Upcoming Service Date:
@@ -256,7 +241,6 @@ const VehicleCard = ({ vehicle, onDeleteVehicle, onUpdateVehicle }) => {
         </div>
       </div>
       
-      {}
       <div className="card-buttons">
         <button 
           onClick={() => setShowUpdateForm(true)}
@@ -293,10 +277,8 @@ const VehicleCard = ({ vehicle, onDeleteVehicle, onUpdateVehicle }) => {
         </button>
       </div>
       
-      {}
       {error && <div className="card-error">{error}</div>}
       
-      {}
       {showServiceHistory && (
         <ServiceHistory
           serviceHistory={serviceHistory}
@@ -305,7 +287,6 @@ const VehicleCard = ({ vehicle, onDeleteVehicle, onUpdateVehicle }) => {
         />
       )}
 
-      {}
       {showUpdateForm && (
         <AddVehicle
           vehicleToUpdate={vehicle}

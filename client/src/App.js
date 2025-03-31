@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import AddVehicle from "./components/AddVehicle";
 import VehicleList from "./components/VehicleList";
@@ -20,33 +20,7 @@ function AppContent() {
   const [errorMessage, setErrorMessage] = useState("");
   const [userInfo, setUserInfo] = useState(null);
 
-  useEffect(() => {
-    
-    document.title = "VeloVault - Car Management System";
-    
-    if (isAuthenticated && token) {
-      fetchVehicles();
-      fetchUserInfo();
-    }
-  }, [isAuthenticated, token]);
-
-  
-  useEffect(() => {
-    
-    const handleSearchResults = (event) => {
-      if (event.detail && Array.isArray(event.detail)) {
-        setFilteredVehicles(event.detail);
-      }
-    };
-
-    window.addEventListener('searchResults', handleSearchResults);
-
-    return () => {
-      window.removeEventListener('searchResults', handleSearchResults);
-    };
-  }, []);
-
-  const fetchUserInfo = async () => {
+  const fetchUserInfo = useCallback(async () => {
     if (!token) return;
     
     try {
@@ -57,9 +31,9 @@ function AppContent() {
     } catch (error) {
       console.error("Error fetching user info:", error);
     }
-  };
+  }, [token]);
 
-  const fetchVehicles = async () => {
+  const fetchVehicles = useCallback(async () => {
     if (!token) return;
     
     setLoading(true);
@@ -76,18 +50,41 @@ function AppContent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
+
+  useEffect(() => {
+    document.title = "VeloVault - Car Management System";
+    
+    if (isAuthenticated && token) {
+      fetchVehicles();
+      fetchUserInfo();
+    }
+  }, [isAuthenticated, token, fetchVehicles, fetchUserInfo]);
+  
+  useEffect(() => {
+    const handleSearchResults = (event) => {
+      if (event.detail && Array.isArray(event.detail)) {
+        setFilteredVehicles(event.detail);
+      }
+    };
+
+    window.addEventListener('searchResults', handleSearchResults);
+
+    return () => {
+      window.removeEventListener('searchResults', handleSearchResults);
+    };
+  }, []);
 
   const handleAddVehicle = async (vehicle) => {
     if (!token) return;
     
     try {
       if (vehicle._id) {
-        await axios.put("https://velovault-api.onrender.com/api/cars/${vehicle._id}", vehicle, {
+        await axios.put(`https://velovault-api.onrender.com/api/cars/${vehicle._id}`, vehicle, {
           headers: { Authorization: `Bearer ${token}` },
         });
       } else {
-        await axios.post("http://localhost:3333/api/cars", vehicle, {
+        await axios.post("https://velovault-api.onrender.com/api/cars", vehicle, {
           headers: { Authorization: `Bearer ${token}` },
         });
       }
@@ -104,7 +101,7 @@ function AppContent() {
     if (!token) return;
     
     try {
-      await axios.delete("https://velovault-api.onrender.com/api/cars/${id}", {
+      await axios.delete(`https://velovault-api.onrender.com/api/cars/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchVehicles();
