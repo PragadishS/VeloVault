@@ -131,3 +131,5 @@ npm start
 - Mobile-friendly
 - Dynamic styling with CSS variables
 - Dark theme with automotive-inspired design
+
+  <p align="center">Made with ❤️ by Pragadish S</p>
