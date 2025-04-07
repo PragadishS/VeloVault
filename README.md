@@ -1,21 +1,19 @@
- 🚗 VeloVault - Vehicle Management System
+# 🚗 VeloVault - Vehicle Management System
 
- 📝 Project Overview
+## 📝 Project Overview
 
-VeloVault is a comprehensive web application designed to help users manage their vehicle information, 
-track service history, and maintain detailed vehicle records efficiently.
+VeloVault is a comprehensive web application designed to help users manage their vehicle information, track service history, 
+and maintain detailed vehicle records efficiently.
 
- ✨ Key Features
+## ✨ Key Features
 
- 🔐 User Authentication
- 
+### 🔐 User Authentication
 - User signup and login
 - Guest user access
 - Profile management
 - Secure JWT-based authentication
 
- 🚙 Vehicle Management
- 
+### 🚙 Vehicle Management
 - Add new vehicles
 - Update vehicle details
 - Delete vehicles
@@ -24,52 +22,45 @@ track service history, and maintain detailed vehicle records efficiently.
   - Car number
   - Company name
 
- 🛠 Service Tracking
- 
+### 🛠 Service Tracking
 - Add service history
 - Track upcoming service dates
 - View detailed service records
 
- 📊 Advanced Vehicle Insights
- 
+### 📊 Advanced Vehicle Insights
 - Resale value estimation
 - Vehicle lifespan prediction
 - Maintenance recommendations
 - Service history tracking
 
- 🛠 Technologies Used
+## 🛠 Technologies Used
 
- Frontend
- 
+### Frontend
 - React
 - React Hooks
 - Axios for API communication
 - Custom CSS with variables for theming
 
- Backend
- 
+### Backend
 - Node.js
 - Express.js
 - MongoDB with Mongoose
 - JWT for authentication
 - Bcrypt for password hashing
 
- Key Dependencies
- 
+### Key Dependencies
 - Frontend: react, axios, react-hooks
 - Backend: express, mongoose, jsonwebtoken, bcrypt
 - Development: dotenv, cors
 
- 🚀 Getting Started
+## 🚀 Getting Started
 
- Prerequisites
- 
+### Prerequisites
 - Node.js (v14 or later)
 - MongoDB
 - npm or yarn
 
- Backend Setup
- 
+### Backend Setup
 1. Clone the repository
 ```bash
 git clone https://github.com/your-username/velovault.git
@@ -93,8 +84,7 @@ PORT=3333
 npm start
 ```
 
- Frontend Setup
- 
+### Frontend Setup
 1. Navigate to frontend directory
 ```bash
 cd ../frontend
@@ -110,10 +100,9 @@ npm install
 npm start
 ```
 
- 🗂 Project Structure
+## 🗂 Project Structure
 
-Backend
-
+### Backend
 - `models/`: Mongoose schemas
   - `User.js`: User data model
   - `Car.js`: Vehicle data model
@@ -122,8 +111,7 @@ Backend
   - `carRoutes.js`: Vehicle management routes
 - `server.js`: Main server configuration
 
-Frontend
-
+### Frontend
 - `components/`: React components
   - `Login.js`: User login component
   - `Signup.js`: User registration component
@@ -132,17 +120,14 @@ Frontend
   - `VehicleList.js`: List of vehicles
 - `AuthContext.js`: Authentication state management
 
-🔒 Security Features
-
+## 🔒 Security Features
 - Password hashing with bcrypt
 - JWT-based authentication
 - Protected routes
 - Input validation
 - Secure guest user creation
 
-📱 Responsive Design
-
+## 📱 Responsive Design
 - Mobile-friendly
 - Dynamic styling with CSS variables
 - Dark theme with automotive-inspired design
-
