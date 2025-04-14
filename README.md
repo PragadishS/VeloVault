@@ -1,6 +1,7 @@
 # 🚗 VeloVault - Vehicle Management System
 
-![Uploading Screenshot 1947-01-24 at 6.53.55 PM.png…]()
+<img width="1440" alt="Screenshot 1947-01-24 at 6 53 55 PM" src="https://github.com/user-attachments/assets/e8c615ff-ef08-4e97-87ce-c972b14be4a0" />
+
 
 
 ## 📝 Project Overview
