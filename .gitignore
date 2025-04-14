@@ -14,4 +14,4 @@ yarn-error.log*
 
 # Build directories
 /client/build
-/dist
+EOF
